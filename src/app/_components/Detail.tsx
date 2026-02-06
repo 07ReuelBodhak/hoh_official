@@ -22,7 +22,7 @@ const Detail = () => {
             </p>
           </div>
 
-          <Button url="/learn-more" variant="secondary">
+          <Button href="https://discord.gg/g3GN62mr" variant="secondary">
             Learn More
           </Button>
         </div>
