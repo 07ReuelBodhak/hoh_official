@@ -1,0 +1,82 @@
+@import "tailwindcss";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------- Custom Colors, Fonts, and Utilities ---------------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: "Noto Sans", sans-serif;
+  }
+
+  body {
+    background-color: #f8f5f5; /* default light background */
+    color: #230f0f; /* default text color */
+  }
+
+  /* Dark mode support */
+  html.dark body {
+    background-color: #230f0f;
+    color: white;
+  }
+}
+
+@layer components {
+  /* Primary button */
+  .btn-primary {
+    @apply bg-[#b20000] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#8f0000] transition-colors hover:-translate-y-0.5;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-[#1e0d0d] border border-[#361717] rounded-xl p-6;
+  }
+
+  /* Status badge */
+  .status-badge {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#b20000]/20 border border-[#b20000]/40 text-[#b20000] text-xs font-bold uppercase tracking-wider;
+  }
+}
+
+@layer utilities {
+  /* Custom animation */
+  .animate-pulseSlow {
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+
+  /* Custom drop shadow */
+  .shadow-primary {
+    box-shadow: 0 10px 30px rgba(178, 0, 0, 0.35);
+  }
+
+  /* Custom font classes */
+  .font-display {
+    font-family: "Space Grotesk", sans-serif;
+  }
+
+  .font-body {
+    font-family: "Noto Sans", sans-serif;
+  }
+
+  /* Custom backgrounds */
+  .bg-background-dark {
+    background-color: #230f0f;
+  }
+
+  .bg-background-light {
+    background-color: #f8f5f5;
+  }
+
+  /* Custom borders */
+  .border-dark {
+    border-color: #361717;
+  }
+}
+
+.glitch-text {
+  text-shadow:
+    2px 2px 0 #f20d0d,
+    -2px -2px 0 #492222;
+}
