@@ -25,15 +25,28 @@ export default function BlogFeedPage() {
 
     setLoading(true);
 
-    const res = await fetch(`/api/community/blog?page=${page}&limit=5`);
-    const data = await res.json();
+    try {
+      const res = await fetch(`/api/community/blog?page=${page}&limit=5`);
+      const data = await res.json();
 
-    setBlogs((prev) => [...prev, ...data.blogs]);
-    setHasMore(data.hasMore);
+      if (!res.ok) {
+        console.error("API Error:", data);
+        setHasMore(false);
+        return;
+      }
 
-    setPage((prev) => prev + 1);
+      const newBlogs = Array.isArray(data.blogs) ? data.blogs : [];
 
-    setLoading(false);
+      setBlogs((prev) => [...prev, ...newBlogs]);
+      setHasMore(Boolean(data.hasMore));
+
+      setPage((prev) => prev + 1);
+    } catch (err) {
+      console.error("Fetch Failed:", err);
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Initial Load

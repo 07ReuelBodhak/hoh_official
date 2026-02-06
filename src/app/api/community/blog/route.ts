@@ -18,15 +18,21 @@ export async function GET(req: Request) {
       .skip(skip)
       .limit(limit);
 
-    const totalBlogs = await Blog.countDocuments();
+    const total = await Blog.countDocuments();
 
     return NextResponse.json({
       blogs,
-      hasMore: skip + blogs.length < totalBlogs,
+      hasMore: skip + blogs.length < total,
     });
   } catch (error) {
+    console.log("BLOG FETCH ERROR:", error);
+
     return NextResponse.json(
-      { error: "Failed to fetch blogs" },
+      {
+        blogs: [],
+        hasMore: false,
+        error: "Failed to fetch blogs",
+      },
       { status: 500 },
     );
   }

@@ -28,7 +28,13 @@ export default function CommunityRosterPage() {
     try {
       const res = await fetch("/api/roster");
       const data = await res.json();
-      setPlayers(data || []);
+      if (Array.isArray(data)) {
+        setPlayers(data);
+      } else if (Array.isArray(data.players)) {
+        setPlayers(data.players);
+      } else {
+        setPlayers([]);
+      }
     } catch (err) {
       console.error("Roster Fetch Error:", err);
     } finally {
@@ -40,10 +46,11 @@ export default function CommunityRosterPage() {
     fetchRoster();
   }, []);
 
-  /* ✅ Group Players by Rank */
-  const centurions = players.filter((p) => p.rank === "The Centurions");
-  const elysian = players.filter((p) => p.rank === "The Elysian");
-  const oracle = players.filter((p) => p.rank === "The Oracle");
+  const safePlayers = Array.isArray(players) ? players : [];
+
+  const centurions = safePlayers.filter((p) => p.rank === "The Centurions");
+  const elysian = safePlayers.filter((p) => p.rank === "The Elysian");
+  const oracle = safePlayers.filter((p) => p.rank === "The Oracle");
 
   /* ✅ Role Logic */
   const getRole = (player: Player) => {
