@@ -12,9 +12,7 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
 
-  // Check staff authorization in DB
   useEffect(() => {
-    console.log("Session data:", session);
     async function checkAdmin() {
       if (!session) {
         setLoading(false);

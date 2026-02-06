@@ -28,7 +28,8 @@ export default function DashboardTable() {
       if (!res.ok) throw new Error("Failed to fetch results");
 
       const data = await res.json();
-      setResults(Array.isArray(data) ? data : []);
+
+      setResults(Array.isArray(data.results) ? data.results : []);
     } catch (error) {
       console.error("Fetch Results Error:", error);
     } finally {

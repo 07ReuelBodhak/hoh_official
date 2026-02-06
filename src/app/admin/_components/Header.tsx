@@ -8,7 +8,7 @@ export default function Header({ name, role, image }: HeaderProps) {
   return (
     <header
       className="
-        sticky top-0 z-50
+        sticky top-0 z-20
         flex items-center justify-between
         px-6 py-4
         bg-[#2a1515]/95 backdrop-blur-md

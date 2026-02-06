@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 type BlogType = {
   _id: string;
@@ -15,18 +15,21 @@ type BlogType = {
 export default function BlogFeedPage() {
   const [blogs, setBlogs] = useState<BlogType[]>([]);
   const [page, setPage] = useState(1);
-
+  const pageRef = useRef(1); // keeps track of the latest page
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
-  // Fetch Blogs Function
-  const fetchBlogs = async () => {
-    if (loading || !hasMore) return;
+  const loadingRef = useRef(false);
 
-    setLoading(true);
+  const fetchBlogs = async () => {
+    if (loadingRef.current || !hasMore) return;
+
+    loadingRef.current = true; // block multiple calls immediately
 
     try {
-      const res = await fetch(`/api/community/blog?page=${page}&limit=5`);
+      const res = await fetch(
+        `/api/community/blog?page=${pageRef.current}&limit=5`,
+      );
       const data = await res.json();
 
       if (!res.ok) {
@@ -36,25 +39,29 @@ export default function BlogFeedPage() {
       }
 
       const newBlogs = Array.isArray(data.blogs) ? data.blogs : [];
+      if (newBlogs.length === 0) {
+        setHasMore(false);
+      }
 
       setBlogs((prev) => [...prev, ...newBlogs]);
       setHasMore(Boolean(data.hasMore));
 
-      setPage((prev) => prev + 1);
+      pageRef.current += 1;
+      setPage(pageRef.current);
     } catch (err) {
       console.error("Fetch Failed:", err);
       setHasMore(false);
     } finally {
-      setLoading(false);
+      loadingRef.current = false; // unblock
     }
   };
 
-  // Initial Load
+  // Initial load
   useEffect(() => {
     fetchBlogs();
   }, []);
 
-  // Infinite Scroll
+  // Infinite scroll
   useEffect(() => {
     const handleScroll = () => {
       if (
@@ -66,37 +73,28 @@ export default function BlogFeedPage() {
     };
 
     window.addEventListener("scroll", handleScroll);
-
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [page, hasMore]);
+  }, []); // empty dependency avoids duplicate listeners
 
   return (
     <main className="min-h-screen bg-[#230f0f] flex justify-center py-10 px-4">
       <div className="w-full max-w-[650px] flex flex-col gap-8">
-        {/* No Blogs */}
         {!loading && blogs.length === 0 && (
           <p className="text-center text-gray-400 text-lg">
             No blogs available.
           </p>
         )}
 
-        {/* Blog Posts */}
         {blogs.map((blog) => (
           <article
             key={blog._id}
             className="rounded-2xl border border-[#4b2020] bg-[#2a1414] shadow-md overflow-hidden"
           >
-            {/* Top Author Bar */}
             <div className="flex items-center gap-3 px-5 py-4">
-              {/* Avatar */}
               <div
                 className="w-11 h-11 rounded-full bg-cover bg-center border border-[#4b2020]"
-                style={{
-                  backgroundImage: `url(${blog.authorPfp})`,
-                }}
+                style={{ backgroundImage: `url(${blog.authorPfp})` }}
               />
-
-              {/* Author Name + Date */}
               <div className="flex flex-col">
                 <h3 className="text-white font-semibold text-sm">
                   {blog.author}
@@ -107,7 +105,6 @@ export default function BlogFeedPage() {
               </div>
             </div>
 
-            {/* Cover Image */}
             {blog.coverImage && (
               <div className="w-full aspect-[16/9] bg-black overflow-hidden">
                 <img
@@ -118,14 +115,10 @@ export default function BlogFeedPage() {
               </div>
             )}
 
-            {/* Blog Content */}
             <div className="p-5 flex flex-col gap-2">
-              {/* Title */}
               <h2 className="text-lg sm:text-xl font-bold text-white">
                 {blog.title}
               </h2>
-
-              {/* Preview Content */}
               <p className="text-sm sm:text-base text-gray-300 leading-relaxed line-clamp-3">
                 {blog.content}
               </p>
@@ -133,14 +126,12 @@ export default function BlogFeedPage() {
           </article>
         ))}
 
-        {/* Loading */}
         {loading && (
           <p className="text-center text-gray-400 text-sm">
             Loading more blogs...
           </p>
         )}
 
-        {/* No More Blogs */}
         {!hasMore && blogs.length > 0 && (
           <p className="text-center text-gray-500 text-sm">
             No more blogs to load.
