@@ -3,7 +3,11 @@
 import { useState } from "react";
 import Notification from "@/components/NotificationProps";
 
-export default function AddPlayerForm() {
+type AddPlayerFormProps = {
+  onPlayerAdded: () => void;
+};
+
+export default function AddPlayerForm({ onPlayerAdded }: AddPlayerFormProps) {
   const [name, setName] = useState("");
   const [rank, setRank] = useState("");
   const [positions, setPositions] = useState<string[]>([]);
@@ -49,6 +53,8 @@ export default function AddPlayerForm() {
 
       const data = await response.json();
       setNotification(data.message);
+
+      onPlayerAdded();
     } catch (error) {
       console.error("Error adding player:", error);
       setNotification("Failed to add player");

@@ -116,41 +116,51 @@ export default function CommunityRosterPage() {
                   </td>
                 </tr>
               ) : (
-                list.map((player) => (
-                  <tr
-                    key={player._id}
-                    className="hover:bg-white/5 transition-colors"
-                  >
-                    {/* IGN */}
-                    <td className="px-6 py-4 font-bold text-white">
-                      {player.name}
-                    </td>
+                [...list]
+                  .sort((a, b) => {
+                    const getPriority = (p: Player) => {
+                      if (p.position.includes("Captain")) return 1;
+                      if (p.position.includes("Vice Captain")) return 2;
+                      return 3;
+                    };
 
-                    {/* Role */}
-                    <td className="px-6 py-4 text-white font-medium">
-                      {getRole(player)}
-                    </td>
+                    return getPriority(a) - getPriority(b);
+                  })
+                  .map((player) => (
+                    <tr
+                      key={player._id}
+                      className="hover:bg-white/5 transition-colors"
+                    >
+                      {/* IGN */}
+                      <td className="px-6 py-4 font-bold text-white">
+                        {player.name}
+                      </td>
 
-                    {/* Positions */}
-                    <td className="px-6 py-4">
-                      <div className="flex flex-wrap gap-2">
-                        {player.position
-                          .filter(
-                            (pos) =>
-                              pos !== "Captain" && pos !== "Vice Captain",
-                          )
-                          .map((pos, index) => (
-                            <span
-                              key={index}
-                              className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-white/10 border border-white/10 text-white"
-                            >
-                              {positionIcons[pos] || "🏐"} {pos}
-                            </span>
-                          ))}
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      {/* Role */}
+                      <td className="px-6 py-4 text-white font-medium">
+                        {getRole(player)}
+                      </td>
+
+                      {/* Positions */}
+                      <td className="px-6 py-4">
+                        <div className="flex flex-wrap gap-2">
+                          {player.position
+                            .filter(
+                              (pos) =>
+                                pos !== "Captain" && pos !== "Vice Captain",
+                            )
+                            .map((pos, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-white/10 border border-white/10 text-white"
+                              >
+                                {positionIcons[pos] || "🏐"} {pos}
+                              </span>
+                            ))}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
               )}
             </tbody>
           </table>

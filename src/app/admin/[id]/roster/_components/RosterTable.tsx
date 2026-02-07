@@ -3,7 +3,11 @@
 import { useEffect, useState } from "react";
 import Notification from "@/components/NotificationProps";
 
-export default function RosterTable() {
+type RosterTableProps = {
+  refreshKey: number;
+};
+
+export default function RosterTable({ refreshKey }: RosterTableProps) {
   const [players, setPlayers] = useState<any[]>([]);
   const [page, setPage] = useState(0);
 
@@ -35,7 +39,7 @@ export default function RosterTable() {
   // ✅ Load roster on mount
   useEffect(() => {
     fetchRoster();
-  }, []);
+  }, [refreshKey]);
 
   const pages = Math.ceil(players.length / perPage);
 
@@ -53,13 +57,10 @@ export default function RosterTable() {
 
       if (!res.ok) throw new Error("Delete failed");
 
-      // ✅ Instantly remove player from UI
       setPlayers((prev) => prev.filter((p) => p._id !== id));
 
-      // ✅ Show notification
       setNotification("Player deleted successfully!");
 
-      // Auto remove notification after 3 sec
       setTimeout(() => setNotification(null), 3000);
     } catch (error) {
       console.error("Delete Error:", error);

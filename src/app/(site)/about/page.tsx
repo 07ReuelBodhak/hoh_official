@@ -17,23 +17,48 @@ export default function StaffPage() {
 
   async function fetchStaff() {
     setLoading(true);
+
     try {
       const res = await fetch("/api/staff");
       const data = await res.json();
 
-      console.log(data);
+      console.log("API DATA:", data);
 
+      let staffList: StaffMember[] = [];
+
+      // ✅ Correctly assign response to staffList
       if (Array.isArray(data)) {
-        setStaff(data);
+        staffList = data;
       } else {
-        setStaff(data.staff || []);
+        staffList = data.staff || [];
       }
+
+      // ✅ Role Order
+      const roleOrder = [
+        "Owner",
+        "Co-owner",
+        "Moderator",
+        "Admin",
+        "Tryout Hoster",
+        "Scrim Manager",
+      ];
+
+      // ✅ Sort properly
+      staffList.sort((a, b) => {
+        return roleOrder.indexOf(a.role) - roleOrder.indexOf(b.role);
+      });
+
+      console.log("SORTED STAFF:", staffList);
+
+      // ✅ Now update state ONCE
+      setStaff(staffList);
     } catch (err) {
       console.error("Failed to fetch staff:", err);
     } finally {
       setLoading(false);
     }
   }
+
   useEffect(() => {
     fetchStaff();
   }, []);
@@ -83,12 +108,6 @@ export default function StaffPage() {
                   />
 
                   <div className="absolute inset-0 bg-gradient-to-t from-[#120606] via-transparent to-transparent" />
-
-                  {/* <img
-                    src="/card-overlay.png"
-                    className="absolute inset-0 w-full h-full object-cover opacity-40 mix-blend-screen pointer-events-none"
-                    alt="overlay"
-                  /> */}
                 </div>
 
                 <div className="relative p-6 flex flex-col gap-3">

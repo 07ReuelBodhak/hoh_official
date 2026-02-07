@@ -50,11 +50,32 @@ export default function ResultPage() {
   const startIndex = (page - 1) * limit;
   const paginatedResults = allResults.slice(startIndex, startIndex + limit);
 
-  const totalOfficial = allResults.filter((m) => m.mode === "official").length;
-  const totalFriendly = allResults.filter((m) => m.mode === "friendly").length;
-  const totalCommunity = allResults.filter(
-    (m) => m.mode === "community",
-  ).length;
+  // ✅ Helper: Count Total / Wins / Loss per mode
+  const getStatsByMode = (mode: "official" | "friendly" | "community") => {
+    const matches = allResults.filter((m) => m.mode === mode);
+
+    let wins = 0;
+    let losses = 0;
+
+    matches.forEach((match) => {
+      const usWins = match.sets.filter((s) => s.us > s.them).length;
+      const themWins = match.sets.filter((s) => s.them > s.us).length;
+
+      if (usWins > themWins) wins++;
+      else losses++;
+    });
+
+    return {
+      total: matches.length,
+      wins,
+      losses,
+    };
+  };
+
+  // ✅ Stats for Cards
+  const officialStats = getStatsByMode("official");
+  const friendlyStats = getStatsByMode("friendly");
+  const communityStats = getStatsByMode("community");
 
   let totalWins = 0;
 
@@ -78,29 +99,61 @@ export default function ResultPage() {
           </p>
         </div>
 
+        {/* ✅ Updated Cards Logic Only */}
         {!loading && allResults.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-            <div className="rounded-xl p-6 bg-[#2a1212] border border-[#4b2020]">
-              <p className="text-[#ce8d8d] text-xs uppercase tracking-wider">
-                Total Official
-              </p>
-              <p className="text-4xl font-bold mt-2">{totalOfficial}</p>
+            {/* ✅ Official Card */}
+            <div className="rounded-xl p-6 bg-[#2a1212] border border-[#4b2020] text-center">
+              <p className="text-white font-bold text-lg">Official</p>
+
+              <div className="grid grid-cols-3 mt-4 text-xs text-[#ce8d8d] uppercase font-semibold">
+                <p>Total</p>
+                <p>Win</p>
+                <p>Loss</p>
+              </div>
+
+              <div className="grid grid-cols-3 mt-2 text-3xl font-bold text-white">
+                <p>{officialStats.total}</p>
+                <p className="text-green-400">{officialStats.wins}</p>
+                <p className="text-red-400">{officialStats.losses}</p>
+              </div>
             </div>
 
-            <div className="rounded-xl p-6 bg-[#2a1212] border border-[#4b2020]">
-              <p className="text-[#ce8d8d] text-xs uppercase tracking-wider">
-                Total Friendly
-              </p>
-              <p className="text-4xl font-bold mt-2">{totalFriendly}</p>
+            {/* ✅ Friendly Card */}
+            <div className="rounded-xl p-6 bg-[#2a1212] border border-[#4b2020] text-center">
+              <p className="text-white font-bold text-lg">Friendly</p>
+
+              <div className="grid grid-cols-3 mt-4 text-xs text-[#ce8d8d] uppercase font-semibold">
+                <p>Total</p>
+                <p>Win</p>
+                <p>Loss</p>
+              </div>
+
+              <div className="grid grid-cols-3 mt-2 text-3xl font-bold text-white">
+                <p>{friendlyStats.total}</p>
+                <p className="text-green-400">{friendlyStats.wins}</p>
+                <p className="text-red-400">{friendlyStats.losses}</p>
+              </div>
             </div>
 
-            <div className="rounded-xl p-6 bg-[#2a1212] border border-[#4b2020]">
-              <p className="text-[#ce8d8d] text-xs uppercase tracking-wider">
-                Total Community
-              </p>
-              <p className="text-4xl font-bold mt-2">{totalCommunity}</p>
+            {/* ✅ Community Card */}
+            <div className="rounded-xl p-6 bg-[#2a1212] border border-[#4b2020] text-center">
+              <p className="text-white font-bold text-lg">Community</p>
+
+              <div className="grid grid-cols-3 mt-4 text-xs text-[#ce8d8d] uppercase font-semibold">
+                <p>Total</p>
+                <p>Win</p>
+                <p>Loss</p>
+              </div>
+
+              <div className="grid grid-cols-3 mt-2 text-3xl font-bold text-white">
+                <p>{communityStats.total}</p>
+                <p className="text-green-400">{communityStats.wins}</p>
+                <p className="text-red-400">{communityStats.losses}</p>
+              </div>
             </div>
 
+            {/* ✅ Win Rate Card (Unchanged) */}
             <div className="rounded-xl p-6 bg-[#2a1212] border border-[#4b2020]">
               <p className="text-[#ce8d8d] text-xs uppercase tracking-wider">
                 Win Rate
@@ -127,6 +180,7 @@ export default function ResultPage() {
           </div>
         )}
 
+        {/* ✅ Rest of your table code stays 100% unchanged */}
         {!loading && paginatedResults.length > 0 && (
           <div className="overflow-hidden rounded-xl border border-[#4b2020] bg-[#2a1212] shadow-xl">
             <div className="overflow-x-auto">

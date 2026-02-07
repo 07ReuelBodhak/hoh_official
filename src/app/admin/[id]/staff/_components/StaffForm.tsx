@@ -119,19 +119,26 @@ export default function StaffForm() {
             className="w-full bg-[#240f0f] border border-[#4b2020] rounded-lg px-3 py-2 text-white text-sm"
           />
         </div>
-
         <div>
           <label className="text-xs uppercase text-[#ce8d8d] font-bold block mb-1">
             Role
           </label>
-          <input
-            value={role}
-            onChange={(e) => setRole(e.target.value)}
-            placeholder="Coach / Manager / Player"
-            className="w-full bg-[#240f0f] border border-[#4b2020] rounded-lg px-3 py-2 text-white text-sm"
-          />
-        </div>
 
+          <select
+            value={role}
+            required
+            onChange={(e) => setRole(e.target.value)}
+            className="w-full bg-[#240f0f] border border-[#4b2020] rounded-lg px-3 py-2 text-white text-sm cursor-pointer"
+          >
+            <option value="">Select Role</option>
+            <option value="Owner">Owner</option>
+            <option value="Co-owner">Co-owner</option>
+            <option value="Moderator">Moderator</option>
+            <option value="Admin">Admin</option>
+            <option value="Tryout Hoster">Tryout Hoster</option>
+            <option value="Scrim Manager">Scrim Manager</option>
+          </select>
+        </div>
         <div>
           <label className="text-xs uppercase text-[#ce8d8d] font-bold block mb-1">
             Description
